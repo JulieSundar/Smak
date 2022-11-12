@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+	<meta charset="utf-8">
+ 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Team IOTech ~ HackOmation 2015">
+    <!--BASIC JS LIBS-->
+    <!--CAMERA-->
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/socket.io.js"></script>
+    <!-- BASIC CSS -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+   <script type="text/javascript" src="js/highstock.js"></script>
+    <script type="text/javascript" src="widgets/live_chart/live_chart.js"></script>
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <!--NEW ADMIN THEME-->
+	<style>
+	body {
+		overflow: hidden;
+		}
+		#content {
+		max-height: calc(100% - 120px);
+		overflow-y: scroll;
+		padding: 0px 10% !important;
+		margin-top: 60px !important;
+	}
+
+
+	html, body {
+		height: 100%;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+	}
+	header {
+		width: 100%;
+		height: 60px;
+		background: #ccc;
+		position: fixed;
+		top: 0;
+	}
+
+	footer {
+		width: 100%;
+		height: 60px;
+		background: #ccc;
+		position: fixed;
+		bottom: 0;
+	}
+	
+            .videoContainer {
+                position: relative;
+                width: 200px;
+                height: 150px;
+            }
+            .videoContainer video {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+            }
+            .volume_bar {
+                position: absolute;
+                width: 5px;
+                height: 0px;
+                right: 0px;
+                bottom: 0px;
+                background-color: #12acef;
+            }
+       
+	</style>
+	
+  </head>
+
+  <header></header>
+<div id="content">
+    <script type="text/javascript">
+    $(document).ready(function() {
+        var ecg_params = {
+            data: {
+                feedSelect: 'auto', // dropdown from auto, socket, if Live feed available use that, else use REST
+                // Live-Data ~ MQTT / SocketIO
+                socketURL: '%window.location.host%', //  %params% will be run-time evaluated and replaced with result string
+                mqTopic: 'ecg',
+                restURL: "%window.location.host%/gpio/12/",
+            },
+            // highCharts config here       
+            chart: {
+				title: {
+					text: 'Monthly Average Temperature',
+					x: -20 //center
+				},
+				subtitle: {
+					text: 'Source: WorldClimate.com',
+					x: -20
+				},
+				xAxis: {
+					categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+						'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+				},
+				yAxis: {
+					title: {
+						text: 'Temperature (°C)'
+					},
+					plotLines: [{
+						value: 0,
+						width: 1,
+						color: '#808080'
+					}]
+				},
+				tooltip: {
+					valueSuffix: '°C'
+				},
+				legend: {
+					layout: 'vertical',
+					align: 'right',
+					verticalAlign: 'middle',
+					borderWidth: 0
+				},
+				series: [{
+								name: 'Tokyo',
+								data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+							}, {
+								name: 'New York',
+								data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
+							}, {
+								name: 'Berlin',
+								data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
+							}, {
+								name: 'London',
+								data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+						}]
+            }
+        };
+        var stethoscope_params = {
+            data: {
+                feedSelect: 'auto', // dropdown from auto, socket, if Live feed available use that, else use REST
+                // Live-Data ~ MQTT / SocketIO
+                socketURL: '10.10.160.1', //  %params% will be run-time evaluated and replaced with result string
+                mqTopic: 'gyro',
+                restURL: "%window.location.host%/gpio/12/",
+            },
+            // highCharts config here       
+            chart: {
+				title: {
+					text: 'Monthly Average Temperature',
+					x: -20 //center
+				},
+				subtitle: {
+					text: 'Source: WorldClimate.com',
+					x: -20
+				},
+				xAxis: {
+					categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+						'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+				},
+				yAxis: {
+					title: {
+						text: 'Temperature (°C)'
+					},
+					plotLines: [{
+						value: 0,
+						width: 1,
+						color: '#808080'
+					}]
+				},
+				tooltip: {
+					valueSuffix: '°C'
+				},
+				legend: {
+					layout: 'vertical',
+					align: 'right',
+					verticalAlign: 'middle',
+					borderWidth: 0
+				},
+				series: [{
+								name: 'Tokyo',
+								data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+							}, {
+								name: 'New York',
+								data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
+							}, {
+								name: 'Berlin',
+								data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
+							}, {
+								name: 'London',
+								data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+						}]
+            }
+        };
+        load_live_chart("ECG/EMG Chart", "ecgchart", ecg_params);
+        load_live_chart("Stethoscope", "stethoscope", stethoscope_params);
+         $("#ecgchart").highcharts.reflow();
+         $("#stethoscope").highcharts.reflow();
+
+        //load_live_chart("speed","container-speed");
+        //load_gauge("rpm","container-rpm");
+
+        // Create the grid
+        // $(function() {
+        //     $('#propGrid').jqPropertyGrid(params, meta);
+        // });
+
+    });
+
+    <!--modal pop up scale -->
+    $('#settingsModal').on('show', function() {
+
+        $(this).find('.modal-body').css({
+            width: '400',
+            height: 'auto',
+            'max-height': '100%'
+        });
+    });
+
+    $(document).ready(function() {
+
+        $("#btn-blog-next").click(function() {
+            $('#blogCarousel').carousel('next')
+        });
+        $("#btn-blog-prev").click(function() {
+            $('#blogCarousel').carousel('prev')
+        });
+
+        $("#btn-client-next").click(function() {
+            $('#clientCarousel').carousel('next')
+        });
+        $("#btn-client-prev").click(function() {
+            $('#clientCarousel').carousel('prev')
+        });
+
+    });
+
+
+
+    $(window).load(function() {
+
+        $('.flexslider').flexslider({
+            animation: "slide",
+            slideshow: true,
+            start: function(slider) {
+                $('body').removeClass('loading');
+            }
+        });
+    });
+    </script>
+</head>
+
+<body>
+		
+
+    <!-- CONTENT CONTAINER -->
+		<div class="container">
+
+		<!-- FIRST ROW OF BLOCKS -->
+		<div class="row">
+		<!-- USER PROFILE BLOCK -->
+
+		<!--CHART-->
+		<div class="col-sm-6 col-lg-6">
+		<div class="dash-unit">
+		<h1 id="title">Start a room</h1>
+        
+				<button id="screenShareButton"></button>
+				<p id="subTitle"></p>
+				<form id="createRoom">
+				<input id="sessionInput"/>
+				<button type="submit">Create it!</button>
+				</form>
+				<div class="videoContainer">
+				<video id="localVideo" style="height: 150px;" oncontextmenu="return false;"></video>
+				<div id="localVolume" class="volume_bar"></div>
+
+				</div>
+				<div id="remotes"></div>
+				<script src="simplewebrtc.bundle.js"></script>
+				 <script>
+            // grab the room from the URL
+            var room = location.search && location.search.split('?')[1];
+
+            // create our webrtc connection
+            var webrtc = new SimpleWebRTC({
+                // the id/element dom element that will hold "our" video
+                localVideoEl: 'localVideo',
+                // the id/element dom element that will hold remote videos
+                remoteVideosEl: '',
+                // immediately ask for camera access
+                autoRequestMedia: true,
+                debug: false,
+                detectSpeakingEvents: true
+            });
+
+            // when it's ready, join if we got a room from the URL
+            webrtc.on('readyToCall', function () {
+                // you can name it anything
+                if (room) webrtc.joinRoom(room);
+            });
+
+            function showVolume(el, volume) {
+                if (!el) return;
+                if (volume < -45) { // vary between -45 and -20
+                    el.style.height = '0px';
+                } else if (volume > -20) {
+                    el.style.height = '100%';
+                } else {
+                    el.style.height = '' + Math.floor((volume + 100) * 100 / 25 - 220) + '%';
+                }
+            }
+            webrtc.on('channelMessage', function (peer, label, data) {
+                if (data.type == 'volume') {
+                    showVolume(document.getElementById('volume_' + peer.id), data.volume);
+                }
+            });
+            webrtc.on('videoAdded', function (video, peer) {
+                console.log('video added', peer);
+                var remotes = document.getElementById('remotes');
+                if (remotes) {
+                    var d = document.createElement('div');
+                    d.className = 'videoContainer';
+                    d.id = 'container_' + webrtc.getDomId(peer);
+                    d.appendChild(video);
+                    var vol = document.createElement('div');
+                    vol.id = 'volume_' + peer.id;
+                    vol.className = 'volume_bar';
+                    video.onclick = function () {
+                        video.style.width = video.videoWidth + 'px';
+                        video.style.height = video.videoHeight + 'px';
+                    };
+                    d.appendChild(vol);
+                    remotes.appendChild(d);
+                }
+            });
+            webrtc.on('videoRemoved', function (video, peer) {
+                console.log('video removed ', peer);
+                var remotes = document.getElementById('remotes');
+                var el = document.getElementById('container_' + webrtc.getDomId(peer));
+                if (remotes && el) {
+                    remotes.removeChild(el);
+                }
+            });
+            webrtc.on('volumeChange', function (volume, treshold) {
+                //console.log('own volume', volume);
+                showVolume(document.getElementById('localVolume'), volume);
+            });
+
+            // Since we use this twice we put it here
+            function setRoom(name) {
+                $('form').remove();
+                $('h1').text(name);
+                $('#subTitle').text('Link to join: ' + location.href);
+                $('body').addClass('active');
+            }
+
+            if (room) {
+                setRoom(room);
+            } else {
+                $('form').submit(function () {
+                    var val = $('#sessionInput').val().toLowerCase().replace(/\s/g, '-').replace(/[^A-Za-z0-9_\-]/g, '');
+                    webrtc.createRoom(val, function (err, name) {
+                        console.log(' create room cb', arguments);
+                    
+                        var newUrl = location.pathname + '?' + name;
+                        if (!err) {
+                            history.replaceState({foo: 'bar'}, null, newUrl);
+                            setRoom(name);
+                        } else {
+                            console.log(err);
+                        }
+                    });
+                    return false;          
+                });
+            }
+
+            var button = $('#screenShareButton'),
+                setButton = function (bool) {
+                    button.text(bool ? 'share screen' : 'stop sharing');
+                };
+            webrtc.on('localScreenStopped', function () {
+                setButton(true);
+            });
+
+            setButton(true);
+
+            button.click(function () {
+                if (webrtc.getLocalScreen()) {
+                    webrtc.stopScreenShare();
+                    setButton(true);
+                } else {
+                    webrtc.shareScreen(function (err) {
+                        if (err) {
+                            setButton(true);
+                        } else {
+                            setButton(false);
+                        }
+                    });
+                    
+                }
+            });
+        </script>
+
+                    
+                    <hr>
+                    <div class="section-graph">
+                        <!--Chart injection-->
+                        <div id="ecgchart"></div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+            <!--GAUGE-->
+        </div>
+    </div>
+ 
+</html>
