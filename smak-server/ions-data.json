@@ -1,0 +1,16 @@
+[
+	{"boardId":0, "device":"RaspBerryPi 2", "interface":"localhost", "status":"online"
+		{ "ioId":0,"gpio":27, "type":"output"},
+		{ "ioId":1,"gpio":25, "type":"input" },
+		{ "ioId":2,"gpio":23, "type":"output", "init":0 },
+		{ "ioId":3,"gpio":12, "pin":32, "type":"pwm", "range":1024, "init":0},
+		{ "ioId":4,"gpio":18, "pin":12, "type":"pwm","range":100, "init":0}
+	},
+	{"boardId":1, "device":"Arduino Uno", "interface":"", "status":"offline"
+		{ "ioId":0,"gpio":27, "type":"output"},
+		{ "ioId":1,"gpio":25, "type":"input" },
+		{ "ioId":2,"gpio":23, "type":"output", "init":0 },
+		{ "ioId":3,"gpio":12, "pin":32, "type":"pwm", "range":1024, "init":0},
+		{ "ioId":4,"gpio":18, "pin":12, "type":"pwm","range":100, "init":0}
+	}
+]
